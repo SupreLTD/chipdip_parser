@@ -17,8 +17,12 @@ async def get_catalog(session: ClientSession) -> List[str]:
     links = ['https://www.chipdip.ru' + i.find('a')['href'] for i in soup]
     return links
 
+
 async def get_categories(session: ClientSession, url: str) -> List[str]:
     data = await get_response_text(session, url)
     soup = BeautifulSoup(data, 'lxml')
-
-
+    elements = soup.find('div', class_='no-visited clear catalog')
+    if elements:
+        for el in elements:
+            link = el.find('a')
+            print(link)
