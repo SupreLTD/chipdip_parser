@@ -4,14 +4,14 @@ from aiohttp import ClientSession
 from loguru import logger
 
 from config import HEADERS
-from utils import get_all_categories
+from utils import get_catalog
 
 
 
 
 async def main():
     async with ClientSession(headers=HEADERS) as session:
-        catalog = await get_all_categories(session)
+        catalog = await get_catalog(session)
 
 
 
