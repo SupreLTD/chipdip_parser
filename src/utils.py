@@ -1,12 +1,20 @@
+from pprint import pprint
 from typing import List
 
 from aiohttp import ClientSession
 from loguru import logger
 from bs4 import BeautifulSoup
+from tenacity import retry
 
 
+
+@retry
 async def get_response_text(session: ClientSession, url: str) -> str:
+
     async with session.get(url) as response:
+        # print(proxy, response.status)
+        assert response.status == 200
+
         logger.info(response.status)
         return await response.text()
 
@@ -19,10 +27,14 @@ async def get_catalog(session: ClientSession) -> List[str]:
 
 
 async def get_categories(session: ClientSession, url: str) -> List[str]:
+
     data = await get_response_text(session, url)
     soup = BeautifulSoup(data, 'lxml')
     elements = soup.find('div', class_='no-visited clear catalog')
     if elements:
-        for el in elements:
-            link = el.find('a')
-            print(link)
+        items = elements.find_all('a', class_='link')
+        links = ['https://www.chipdip.ru' + i['href'] for i in items]
+        return links
+    else:
+        logger.debug(url)
+        return [url]
