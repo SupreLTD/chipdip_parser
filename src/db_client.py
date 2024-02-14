@@ -16,3 +16,9 @@ async def cleaner_products_table() -> None:
     async with AIOTinyDB('db.json') as db:
         table = db.table('products')
         table.truncate()
+
+
+async def get_items_from_db() -> list[dict]:
+    async with AIOTinyDB('db.json') as db:
+        table = db.table('products')
+        return table.all()

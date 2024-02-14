@@ -1,3 +1,4 @@
+import csv
 from asyncio import sleep
 from typing import List
 
@@ -7,6 +8,7 @@ from bs4 import BeautifulSoup
 from tenacity import retry
 
 from models import Item
+from src.db_client import get_items_from_db
 
 
 @retry
@@ -83,3 +85,12 @@ def get_items_from_html(text: str) -> List[Item | None]:
             ))
 
     return result
+
+
+async def to_csv() -> None:
+    data = await get_items_from_db()
+    with open('../data.csv', 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=data[0].keys())
+        writer.writeheader()
+
+        writer.writerows(data)

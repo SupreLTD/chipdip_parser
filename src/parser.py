@@ -1,11 +1,12 @@
 from asyncio import sleep
+
 from aiohttp import ClientSession
 from loguru import logger
 from random import shuffle
 from tqdm import tqdm
 
 from config import HEADERS
-from utils import get_catalog, get_categories, get_items
+from utils import get_catalog, get_categories, get_items, to_csv
 from db_client import save_data, cleaner_products_table
 
 
@@ -29,6 +30,9 @@ async def main():
             if products:
                 await save_data(products)
                 logger.info(f'Saved in DB {len(products)} items')
+
+    await to_csv()
+    logger.info('Finished parsing.')
 
 
 
