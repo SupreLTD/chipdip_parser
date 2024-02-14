@@ -1,9 +1,7 @@
 from asyncio import sleep
-from pprint import pprint
 from typing import List
 
 from aiohttp import ClientSession
-from aiohttp.abc import HTTPException
 from loguru import logger
 from bs4 import BeautifulSoup
 from tenacity import retry
@@ -20,7 +18,6 @@ async def get_response_text(session: ClientSession, url: str) -> str | None:
             else:
                 logger.info(f'{response.status} | {url}')
                 raise ValueError()
-        # logger.info(response.status)
         return await response.text()
 
 
@@ -51,7 +48,6 @@ async def get_items(session: ClientSession, url: str) -> List[Item]:
         if not data:
             break
         items = get_items_from_html(data)
-        # print(items)
         if not items:
             break
         result.extend(items)
@@ -85,4 +81,5 @@ def get_items_from_html(text: str) -> List[Item | None]:
                 wholesale_price=wholesale_price,
                 manufacturer=manufacturer
             ))
+
     return result
