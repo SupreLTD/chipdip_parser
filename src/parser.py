@@ -6,7 +6,7 @@ from loguru import logger
 from random import shuffle
 
 from config import HEADERS
-from utils import get_catalog, get_categories
+from utils import get_catalog, get_categories, get_items
 
 logger.add('lols.log', level='DEBUG')
 
@@ -18,9 +18,15 @@ async def main():
         categories = []
         for cat in catalog:
             categories.extend(await get_categories(session, cat))
+            # break
             await sleep(0.05)
-        categories = [i.replace('catalog-show', 'catalog')+'?ps=x3&page=' for i in categories]
-        pprint(categories)
+        categories = [f"{i.replace('catalog-show', 'catalog')}?ps=x3&page=" for i in categories]
+        shuffle(categories)
+        for category in categories:
+            logger.info(category)
+            products = await get_items(session, category)
+            print(products)
+
 
 
 asyncio.run(main())
