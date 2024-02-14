@@ -11,17 +11,16 @@ from tenacity import retry
 from models import Item
 
 
-# @retry
+@retry
 async def get_response_text(session: ClientSession, url: str) -> str | None:
     async with session.get(url) as response:
         if response.status != 200:
             if response.status == 404:
                 return
             else:
-
                 logger.info(f'{response.status} | {url}')
                 raise ValueError()
-        logger.info(response.status)
+        # logger.info(response.status)
         return await response.text()
 
 
@@ -41,7 +40,6 @@ async def get_categories(session: ClientSession, url: str) -> List[str]:
         links = ['https://www.chipdip.ru' + i['href'] for i in categories]
         return links
     else:
-        logger.debug(url)
         return [url]
 
 
